@@ -1,0 +1,21 @@
+@startuml QMP1
+
+class Prenda {
+  tipo : string
+  material : string
+  colorPrincipal : string
+  colorSecundario : string
+  {abstract} bool  esTipoCorrespondienteACategoria()
+}
+
+class Categoria {
+  tiposValidos: List<string>
+  bool  esTipoCorrespondienteACategoria()
+}
+
+Prenda --> "1" Categoria
+
+class Atuendo
+
+Atuendo --> "*" Prenda
+@enduml
