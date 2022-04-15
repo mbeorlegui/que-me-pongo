@@ -5,7 +5,6 @@ class Prenda {
   material : string
   colorPrincipal : string
   colorSecundario : string
-  {abstract} bool  esTipoCorrespondienteACategoria()
 }
 
 class Categoria {
