@@ -3,35 +3,50 @@ class Atuendo {
 }
 
 abstract class Prenda {
-  String tipo;
-  String material;
-  String colorPrincipal;
-  String colorSecundario;
+  TipoPrenda tipo;
+  Material material;
+  Color colorPrincipal;
+  Color colorSecundario;
   Categoria categoria;
 
-  constructor (String tipo, String material, String colorPrincipal, String colorSecundario, Categoria categoria){
-    if(tipo.notNull() && material.notNull() && colorPrincipal.notNull() && 
-      categoria.notNull() && categoria.correspondeTipo(tipo)) {
-      this.tipo = tipo;
-      this.material = material;
-      this.colorPrincipal = colorPrincipal;
-      this.colorSecundario = colorSecundario;
-      this.categoria= categoria;
-    } else {
-      throw new Exception(message = "Inicializacion invalida");
-    }
+  constructor (TipoPrenda tipo, Material material, Color colorPrincipal, Color colorSecundario){
+    this.tipo = requireNonNull(tipo, "El tipo de prenda es obligatorio");
+    this.material = requireNonNull(material, "El material es obligatorio");
+    this.colorPrincipal = requireNonNull(colorPrincipal, "El color principal es obligatorio");
+    this.colorSecundario = requireNonNull(colorSecundario, "El color secundario es obligatorio");
+  }
+
+  constructor (TipoPrenda tipo, Material material, Color colorPrincipal){
+    this.tipo = requireNonNull(tipo, "El tipo de prenda es obligatorio");
+    this.material = requireNonNull(material, "El material es obligatorio");
+    this.colorPrincipal = requireNonNull(colorPrincipal, "El color principal es obligatorio");
+  }
+
+  metodo categoria(){
+    return tipo.categoria()
   }
 }
 
-class Categoria {
-  List<String> tiposValidos;
+class Color { // Modelo el color a partir de RGB
+  int  rojo, verde, azul 
 
-  Bool correspondeTipo(String tipo) {
-    return (this.tiposValidos.contains(tipo))
+  constructor (rojo, verde, azul){
+    this.rojo = rojo;
+    this.verde = verde;
+    this.azul = azul;
   }
 }
 
-Categoria parteSuperior = new Categoria (["remera", "camisa", ...]);
-Categoria parteInferior = new Categoria (["short", "jean", ...]);
-Categoria accesorios = new Categoria (["lentes de sol", "anillo", ...]);
-Categoria calzado = new Categoria (["zapatillas", "ojotas", ...]);
+enum Categoria {
+  REMERA, 
+  PANTALON, 
+  POLLERA, 
+  CAMISA_MANGA_CORTA, 
+  BLUSA
+}
+
+enum Material {
+  ALGODON,
+  ...
+}
+
