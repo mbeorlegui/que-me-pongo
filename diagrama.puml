@@ -1,20 +1,49 @@
 @startuml QMP1
 
 class Prenda {
-  tipo : string
-  material : string
-  colorPrincipal : string
-  colorSecundario : string
+  tipo : TipoPrenda
+  material : Material
+  colorPrincipal : Color
+  colorSecundario : Color
+
+  Categoria getCategoria()
 }
 
-class Categoria {
-  tiposValidos: List<string>
-  bool  esTipoCorrespondienteACategoria()
+
+class Color {
+  rojo : int
+  verde : int
+  azul : int 
 }
 
-Prenda --> "1" Categoria
+enum Categoria{
+  REMERA, 
+  PANTALON, 
+  POLLERA, 
+  CAMISA_MANGA_CORTA, 
+  BLUSA,
+}
 
-class Atuendo
+enum Material {
+  ALGODON,
+  LINO,
+  LANA,
+  POLIESTER,
+  SEDA,
+}
 
-Atuendo --> "*" Prenda
+class TipoDePrenda {
+  categoria : Categoria  
+  
+  Categoria getCategoria()
+}
+
+Prenda --> Material
+Prenda --> TipoDePrenda
+Prenda --> Color
+TipoDePrenda --> Categoria
+' Prenda conoce su Material
+' Prenda --> "1" Categoria
+
+
 @enduml

@@ -1,7 +1,3 @@
-class Atuendo {
-  List<Prenda> atuendo;
-}
-
 abstract class Prenda {
   TipoPrenda tipo;
   Material material;
@@ -22,13 +18,13 @@ abstract class Prenda {
     this.colorPrincipal = requireNonNull(colorPrincipal, "El color principal es obligatorio");
   }
 
-  metodo categoria(){
+  Categoria getCategoria() {
     return tipo.categoria()
   }
 }
 
 class Color { // Modelo el color a partir de RGB
-  int  rojo, verde, azul 
+  int rojo, verde, azul 
 
   constructor (rojo, verde, azul){
     this.rojo = rojo;
@@ -47,6 +43,26 @@ enum Categoria {
 
 enum Material {
   ALGODON,
-  ...
+  LINO,
+  LANA,
+  POLIESTER,
+  SEDA
 }
 
+class TipoDePrenda {
+  Categoria categoria  
+  
+  constructor(Categoria categoria) {
+    this.categoria = categoria;
+  }
+
+  Categoria getCategoria() {
+    return this.categoria;
+  }
+
+  const ZAPATO = new TipoDePrenda(CALZADO);
+  const REMERA = new TipoDePrenda(PARTE_SUPERIOR);
+  const PANTALON = new TipoDePrenda(PARTE_INFERIOR);
+  // Asi establecemos la relacion entre los Tipos y 
+  // las Categorias
+}
