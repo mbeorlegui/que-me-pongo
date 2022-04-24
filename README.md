@@ -34,7 +34,7 @@ Y luego, al consultar más sobre este requerimiento general, logramos descompone
 
 ### Requerimientos
 
-Iteración 1:
+<u>Iteración 1:</u>
 - Definir _atuendo_ como una combinación de prendas.
 - Los usuarios deben poder cargar prendas validas.
 - Cada prenda debe tener: 
@@ -46,24 +46,24 @@ Iteración 1:
   * Evitar que a una prenda le falte el tipo, el material, la categoría o el color principal. -> Hay que meter estas 
   propiedades en el constructor para que sean necesarias a la hora de instanciar clases.
   * Evitar que a una prenda se le asigne una categoría que no se condiga con su tipo
-    (ej: una remera no puede ser calzado) -> validar en constructor
+    (ej: una remera no puede ser calzado)
 
-Iteración 2:
-- Como usuarie de QuéMePongo, quiero especificar qué trama tiene la tela de una prenda (lisa, rayada, con lunares, 
+<u>Iteración 2:</u>
+- Quiero especificar qué trama tiene la tela de una prenda (lisa, rayada, con lunares, 
   a cuadros o un estampado).
-- Como usuarie de QuéMePongo, quiero crear una prenda especificando primero de qué tipo es.
-- Como usuarie de QuéMePongo, quiero crear una prenda especificando en segundo lugar los aspectos relacionados a su 
+- Quiero crear una prenda especificando primero de qué tipo es.
+- Quiero crear una prenda especificando en segundo lugar los aspectos relacionados a su 
   material (colores, material, trama, etc) para evitar elegir materiales inconsistentes con el tipo de prenda.
-- Como usuarie de QuéMePongo, quiero guardar un borrador de la la última prenda que empecé a cargar para continuar 
+- Quiero guardar un borrador de la la última prenda que empecé a cargar para continuar 
   después.
-- Como usuarie de QuéMePongo, quiero poder no indicar ninguna trama para una tela, y que por defecto ésta sea lisa.
-- Como usuarie de QuéMePongo, quiero poder guardar una prenda solamente si esta es válida
+- Quiero poder no indicar ninguna trama para una tela, y que por defecto ésta sea lisa.
+- Quiero poder guardar una prenda solamente si esta es válida.
 
 __BONUS:__ Por otro lado, el equipo de producto está analizando potenciales futuras funcionalidades para la aplicación 
 y, a fin de tener una estimación de su complejidad, nos pidió que esbocemos una solución a los siguientes 
 requerimientos, orientados a integrar el software con colegios e instituciones privadas:
-- Como usuario QueMePongo, quiero poder recibir sugerencias de uniformes armados.
-- Como usuario QueMePongo, quiero que un uniforme siempre conste de una prenda superior, una inferior y un calzado
+- Quiero poder recibir sugerencias de uniformes armados.
+- Quiero que un uniforme siempre conste de una prenda superior, una inferior y un calzado
 - Como administrador de QueMePongo, quiero poder configurar diferentes uniformes para distintas instituciones 
   (Ej: para el colegio San Juan debe ser una chomba verde de piqué, un pantalón de acetato gris y zapatillas blancas, 
   mientras que para el Instituto Johnson siempre será una camisa blanca, pantalón de vestir negro y zapatos negros)

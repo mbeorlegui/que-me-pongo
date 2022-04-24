@@ -1,10 +1,11 @@
 @startuml QMP1
 
 class Prenda {
-  tipo : TipoPrenda
+  tipo : TipoDePrenda
   material : Material
   colorPrincipal : Color
   colorSecundario : Color
+  trama : Trama
 
   Categoria getCategoria()
 }
@@ -16,12 +17,11 @@ class Color {
   azul : int 
 }
 
-enum Categoria{
-  REMERA, 
-  PANTALON, 
-  POLLERA, 
-  CAMISA_MANGA_CORTA, 
-  BLUSA,
+enum Categoria {
+  CALZADO,
+  PARTE_SUPERIOR,
+  PARTE_INFERIOR,
+  ACCESORIO,
 }
 
 enum Material {
@@ -45,5 +45,46 @@ TipoDePrenda --> Categoria
 ' Prenda conoce su Material
 ' Prenda --> "1" Categoria
 
+
+enum Trama{
+  LISA,
+  RAYADA,
+  CON_LUNARES,
+  A_CUADROS,
+  ESTAMPADO,
+}
+
+' Trama corresponde a la tela, eso quiere decir que
+' corresponde al Material? De ser asi debemos agregarle comportamiento
+' al enum de Material creo
+' IMO: Hay que agregarlo directamente a la prenda como propiedad
+Prenda --> Trama
+
+' El borrador deberia ser una clase "parecida" a la Prenda, e
+' incluso dentro de su constructor, podemos hacer las validaciones
+' de los datos para crear a la prenda desde alli
+
+class Borrador {
+  tipo : TipoDePrenda
+  material : Material
+  colorPrincipal : Color
+  colorSecundario : Color
+  trama : Trama
+
+  void cargarMaterial(material)
+  void cargarColorPrincipal(colorPrincipal)
+  void cargarColorSecundario(colorSecundario)
+  void cargarTrama(trama)
+  Prenda crearPrenda()
+}
+
+class Uniforme {
+  parteSuperior : Prenda
+  parteInferior : Prenda
+  calzado : Prenda
+}
+
+Uniforme -->"3" Prenda
+Borrador ..> Prenda
 
 @enduml
