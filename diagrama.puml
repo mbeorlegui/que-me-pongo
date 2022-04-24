@@ -1,4 +1,4 @@
-@startuml QMP1
+@startuml QMP2
 
 class Prenda {
   tipo : TipoDePrenda

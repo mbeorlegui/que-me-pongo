@@ -73,7 +73,7 @@ requerimientos, orientados a integrar el software con colegios e instituciones p
 ### Resolución
 
 El pseudocodigo utilizado se puede encontrar [aquí](pseudocodigo.java), mientras que el diagrama de 
-clases [aquí](diagrama.png).
+clases [aquí](out/diagrama/QMP2.png).
 
 # Integrantes
 
