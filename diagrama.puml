@@ -6,8 +6,13 @@ class Prenda {
   colorPrincipal : Color
   colorSecundario : Color
   trama : Trama
+  estado : EstadoPrenda
+  usos : Integer
 
   Categoria getCategoria()
+  Boolean esDeCategoria(unaCategoria)
+  void validarCategoria(unaCategoria)
+  void usar()
 }
 
 
@@ -86,5 +91,63 @@ class Uniforme {
 
 Uniforme -->"3" Prenda
 Borrador ..> Prenda
+
+
+class Sugerencia {
+  torso : Prenda
+  piernas : Prenda
+  pies : Prenda
+  accesorios : <List>Prenda
+
+  void validarSugerencia(torso, piernas, pies)
+
+}
+
+
+Sugerencia -> "3..*" Prenda
+
+
+' Para la segunda parte usamos el patron State
+
+abstract EstadoPrenda {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Sucia {
+  void lavar()
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Percudida {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Limpia {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Lavando {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+' No esta clara la transicion de estado que tiene el estado Lavando
+' por lo que decidimos que mientras se esta lavando se pueda usar
+' y cuando eso suceda, pasara a Limpia
+
+EstadoPrenda <|-- Sucia
+EstadoPrenda <|-- Percudida
+EstadoPrenda <|-- Limpia
+EstadoPrenda <|-- Lavando
+
+Sucia ..> Percudida
+Sucia ..> Lavando
+Lavando ..> Limpia
+Limpia ..> Sucia
+
+Prenda -right-> EstadoPrenda
 
 @enduml

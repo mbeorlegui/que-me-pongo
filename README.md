@@ -68,6 +68,8 @@ requerimientos, orientados a integrar el software con colegios e instituciones p
   (Ej: para el colegio San Juan debe ser una chomba verde de piqué, un pantalón de acetato gris y zapatillas blancas, 
   mientras que para el Instituto Johnson siempre será una camisa blanca, pantalón de vestir negro y zapatos negros)
 
+<u>Iteración 2:</u>
+
 
 
 ### Resolución
