@@ -116,43 +116,43 @@ class Color { // Modelo el color a partir de RGB
   }
 }
 
-  enum Categoria {
-    CALZADO,
-    PARTE_SUPERIOR,
-    PARTE_INFERIOR,
-    ACCESORIO,
-  }
+enum Categoria {
+  CALZADO,
+  PARTE_SUPERIOR,
+  PARTE_INFERIOR,
+  ACCESORIO,
+}
 
-  enum Material {
-    ALGODON,
-    LINO,
-    LANA,
-    POLIESTER,
-    SEDA,
-  }
+enum Material {
+  ALGODON,
+  LINO,
+  LANA,
+  POLIESTER,
+  SEDA,
+}
 
-  class TipoDePrenda {
+class TipoDePrenda {
   Categoria categoria
 
   constructor(Categoria categoria) {
     this.categoria = categoria;
   }
 
-    Categoria getCategoria() {
-      return this.categoria;
-    }
-
-    const ZAPATO = new TipoDePrenda(CALZADO);
-    const REMERA=new TipoDePrenda(PARTE_SUPERIOR);
-    const PANTALON=new TipoDePrenda(PARTE_INFERIOR);
-    // Asi establecemos la relacion entre los Tipos y
-    // las Categorias
+  Categoria getCategoria() {
+    return this.categoria;
   }
 
-  class Uniforme {
-    Prenda parteSuperior;
-    Prenda parteInferior;
-    Prenda calzado;
+  const ZAPATO = new TipoDePrenda(CALZADO);
+  const REMERA=new TipoDePrenda(PARTE_SUPERIOR);
+  const PANTALON=new TipoDePrenda(PARTE_INFERIOR);
+  // Asi establecemos la relacion entre los Tipos y
+  // las Categorias
+}
+
+class Uniforme {
+  Prenda parteSuperior;
+  Prenda parteInferior;
+  Prenda calzado;
 
   constructor(Prenda parteSuperior, Prenda parteInferior, Prenda calzado){
     parteSuperior.validarCategoria(Categoria.PARTE_SUPERIOR);
@@ -162,7 +162,7 @@ class Color { // Modelo el color a partir de RGB
     calzado.validarCategoria(Categoria.CALZADO); 
     this.calzado = calzado;
   }
-  }
+}
 
   // Por ahora en lugar de crear una clase Colegio solo con el atributo de
   // Uniforme, decidimos mostrar como
@@ -171,80 +171,79 @@ Borrador chombaVerde = new Borrador(...);
 Borrador pantalonGris = new Borrador(...);
 Borrador zapatillasBlancas = new Borrador(...);
 //...
-  Uniforme sanJuan = new Uniforme(chombaVerde.crearPrenda(), pantalonGris.crearPrenda(),
-      zapatillasBlancas.crearPrenda());
+Uniforme sanJuan = new Uniforme(chombaVerde.crearPrenda(), pantalonGris.crearPrenda(), zapatillasBlancas.crearPrenda());
 
-  class Sugerencia {
-    Prenda torso;
-    Prenda piernas;
-    Prenda pies;
-    List<Prenda> accesorios;
+class Sugerencia {
+  Prenda torso;
+  Prenda piernas;
+  Prenda pies;
+  List<Prenda> accesorios;
 
-  constructor(Prenda torso, Prenda piernas, Prenda pies){
-    validarSugerencia(torso, piernas, pies);
-    this.torso = torso;
-    this.piernas = piernas;
-    this.pies = pies;
+constructor(Prenda torso, Prenda piernas, Prenda pies){
+  validarSugerencia(torso, piernas, pies);
+  this.torso = torso;
+  this.piernas = piernas;
+  this.pies = pies;
+}
+
+  void agregarAccesorio(Prenda unAccesorio) {
+    accesorios.add(unAccesorio);
   }
 
-    void agregarAccesorio(Prenda unAccesorio) {
-      accesorios.add(unAccesorio);
-    }
+  void validarSugerencia(Prenda torso, Prenda piernas, Prenda pies) {
+    torso.validarCategoria(Categoria.PARTE_SUPERIOR);
+    torso.validarUsos();
+    piernas.validarCategoria(Categoria.PARTE_INFERIOR);
+    piernas.validarUsos();
+    pies.validarCategoria(Categoria.CALZADO);
+    pies.validarUsos();
+  }
+}
 
-    void validarSugerencia(Prenda torso, Prenda piernas, Prenda pies) {
-      torso.validarCategoria(Categoria.PARTE_SUPERIOR);
-      torso.validarUsos();
-      piernas.validarCategoria(Categoria.PARTE_INFERIOR);
-      piernas.validarUsos();
-      pies.validarCategoria(Categoria.CALZADO);
-      pies.validarUsos();
-    }
+abstract class EstadoPrenda {
+  Boolean puedeSerSugerida();
+
+  void usar(Prenda unaPrenda);
+}
+
+class Sucia extends EstadoPrenda {
+  void lavar(Prenda unaPrenda) {
+    unaPrenda.setUsos(0);
+    unaPrenda.setEstado(new Lavando());
   }
 
-  abstract class EstadoPrenda {
-    Boolean puedeSerSugerida();
-
-    void usar(Prenda unaPrenda);
+  Boolean puedeSerSugerida() {
+    return true;
   }
 
-  class Sucia extends EstadoPrenda {
-    void lavar(Prenda unaPrenda) {
-      unaPrenda.setUsos(0);
-      unaPrenda.setEstado(new Lavando());
-    }
-
-    Boolean puedeSerSugerida() {
-      return true;
-    }
-
-    void usar(Prenda unaPrenda) {
-      if (unaPrenda.usos > 5) {
-        unaPrenda.setEstado(new Percudida());
-      }
+  void usar(Prenda unaPrenda) {
+    if (unaPrenda.usos > 5) {
+      unaPrenda.setEstado(new Percudida());
     }
   }
+}
 
-  class Percudida extends EstadoPrenda {
-    Boolean puedeSerSugerida() {
-      return false;
-    }
-
-    void usar(Prenda unaPrenda) {
-
-    }
+class Percudida extends EstadoPrenda {
+  Boolean puedeSerSugerida() {
+    return false;
   }
 
-  class Limpia extends EstadoPrenda {
-    Boolean puedeSerSugerida() {
-      return true;
-    }
+  void usar(Prenda unaPrenda) {
 
-    void usar(Prenda unaPrenda) {
-      if (unaPrenda.usos >= 2) {
-        unaPrenda.setEstado(new Sucia());
-      }
+  }
+}
+
+class Limpia extends EstadoPrenda {
+  Boolean puedeSerSugerida() {
+    return true;
+  }
+
+  void usar(Prenda unaPrenda) {
+    if (unaPrenda.usos >= 2) {
+      unaPrenda.setEstado(new Sucia());
     }
   }
+}
 
 class Lavando extends EstadoPrenda {
   Boolean puedeSerSugerida(){
