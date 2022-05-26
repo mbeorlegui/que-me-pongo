@@ -1,3 +1,8 @@
+import java.util.List;
+import java.util.Map;
+
+import Color.Categoria;
+
 class Prenda {
   TipoPrenda tipo;
   Material material;
@@ -6,8 +11,9 @@ class Prenda {
   Trama trama;
   EstadoPrenda estado;
   Integer usos;
+  Integer temperaturaMaximaAdecuada;
 
-  constructor (TipoPrenda tipo, Material material, Color colorPrincipal, Color colorSecundario, Trama trama){
+  constructor (TipoPrenda tipo, Material material, Color colorPrincipal, Color colorSecundario, Trama trama, Integer temperaturaMaximaAdecuada){
     this.tipo = tipo;
     this.material = material;
     this.colorPrincipal = colorPrincipal;
@@ -15,7 +21,12 @@ class Prenda {
     this.trama = trama;
     this.estado = new Limpia();
     this.usos = 1;
+    this.temperaturaMaximaAdecuada = temperaturaMaximaAdecuada;
   }
+
+  Integer getTemperaturaMaximaAdecuada(){
+    return temperaturaMaximaAdecuada;
+  }  
 
   Categoria getCategoria() {
     return tipo.categoria();
@@ -42,10 +53,23 @@ class Prenda {
   }
 
   void validarUsos() {
-    if (estado.puedeSerSugerida()) {
+    if (!estado.puedeSerSugerida()) {
       throw new Exception(
-          message = (prenda.TipoDePrenda.name() + " no puede ser sugerida"));
+       message = (prenda.TipoDePrenda.name() + " no puede ser sugerida"));
     }
+  }
+
+  void validarTemperaturaAdecuada(Integer temperatura){
+    if(temperaturaMaximaAdecuada != NULL && temperaturam > temperaturaMaximaAdecuada){
+      throw new Exception(
+       message = (prenda.TipoDePrenda.name() + " no puede ser sugerida porque la temperatura supera su temperatura maxima adecuada"));
+    }
+  }
+
+  void validarParaSugerencia(Categoria categoria, Integer temperatura) {
+    this.validarCategoria(categoria);
+    this.validarUsos();
+    this.validarTemperaturaAdecuada(temperatura);
   }
 }
 
@@ -53,9 +77,10 @@ class Borrador {
   TipoPrenda tipo;
   Material material;
   Color colorPrincipal;
-  Color colorSecundario;
+  Color colorSecundario = NULL;
   Categoria categoria;
   Trama trama = Trama.LISA;
+  Integer temperaturaMaximaAdecuada = NULL;
 
   constructor(tipo){
     // Ponemos el tipo en el constructor para asegurarnos
@@ -82,6 +107,11 @@ class Borrador {
   }
   // Si no especificamos la trama, por defecto es LISA
 
+  void cargarTemperaturaMaximaAdecuada(temperaturaMaximaAdecuada) {
+    this.temperaturaMaximaAdecuada = temperaturaMaximaAdecuada;
+  }
+  // Si no especificamos la temperatura maxima adecuada, por defecto es null
+
   void validarMaterial() {
     // Falta especificar validaciones en la consigna.
     // Seguramente cuando se agreguen requerimientos
@@ -101,7 +131,8 @@ class Borrador {
         this.material,
         this.colorPrincipal,
         this.colorSecundario,
-        this.trama);
+        this.trama,
+        this.temperaturaMaximaAdecuada);
   }
   // La unica forma de instanciar una Prenda deberia ser a traves del borrador
 }
@@ -173,30 +204,62 @@ Borrador zapatillasBlancas = new Borrador(...);
 //...
 Uniforme sanJuan = new Uniforme(chombaVerde.crearPrenda(), pantalonGris.crearPrenda(), zapatillasBlancas.crearPrenda());
 
-class Sugerencia {
-  Prenda torso;
-  Prenda piernas;
-  Prenda pies;
-  List<Prenda> accesorios;
+/* Otra posibilidad: Guardar las temperaturas en una class Temperaturas y que el sistema
+  las actualice cada X tiempo, asi controlamos la cantidad de llamados a la API
+  Y ademas para tener actualizada la lista cuando la llaman, cada una hora deberia ir 
+  eliminando el primer item de la lista para hacer get(0) y sea la "hora actual"
+class Temperaturas {
+  List<Map<String, Object>> condicionesClimaticas;
 
-constructor(Prenda torso, Prenda piernas, Prenda pies){
-  validarSugerencia(torso, piernas, pies);
-  this.torso = torso;
-  this.piernas = piernas;
-  this.pies = pies;
+  constructor (List<Map<String, Object>> condicionesClimaticas){
+    AccuWeatherAPI apiClima = new AccuWeatherAPI();
+    List<Map<String, Object>> nuevasCondicionesClimaticas = apiClima.getWeather(“Buenos Aires, Argentina”);
+    //this.temperaturaActual = condicionesClimaticas.get(0).get("Temperature").get("Value");
+
+    condicionesClimaticas = nuevasCondicionesClimaticas;
+  }
+
+  void actualizarTemperaturas(){
+
+  }
+}*/
+
+class Sugerencia {
+  List<Prenda> torso;
+  List<Prenda> piernas;
+  List<Prenda> pies;
+  List<Prenda> accesorios;
+  Integer temperaturaActual;
+
+constructor(Prenda torso, Prenda piernas, Prenda pies, Prenda accesorio){
+  AccuWeatherAPI apiClima = new AccuWeatherAPI();
+  List<Map<String, Object>> condicionesClimaticas = apiClima.getWeather(“Buenos Aires, Argentina”);
+  this.temperaturaActual = condicionesClimaticas.get(0).get("Temperature").get("Value");
+  validarSugerencia(torso, piernas, pies, accesorio);
+  this.agregarTorso(torso);
+  this.agregarPiernas(piernas);
+  this.agregarPies(pies);
+  this.agregarAccesorio(accesorio);
 }
 
   void agregarAccesorio(Prenda unAccesorio) {
+    accesorio.validarParaSugerencia(Categoria.ACCESORIO, temperaturaActual);
     accesorios.add(unAccesorio);
   }
 
-  void validarSugerencia(Prenda torso, Prenda piernas, Prenda pies) {
-    torso.validarCategoria(Categoria.PARTE_SUPERIOR);
-    torso.validarUsos();
-    piernas.validarCategoria(Categoria.PARTE_INFERIOR);
-    piernas.validarUsos();
-    pies.validarCategoria(Categoria.CALZADO);
-    pies.validarUsos();
+  void agregarTorso(Prenda unaPrendaTorso) {
+    torso.validarParaSugerencia(Categoria.PARTE_SUPERIOR, temperaturaActual);
+    torso.add(unaPrendaTorso);
+  }
+
+  void agregarPiernas(Prenda unaPrendaPiernas) {
+    piernas.validarParaSugerencia(Categoria.PARTE_INFERIOR, temperaturaActual);
+    piernas.add(unaPrendaPiernas);
+  }
+
+  void agregarPies(Prenda unaPrendaPies) {
+    pies.validarParaSugerencia(Categoria.CALZADO, temperaturaActual);
+    pies.add(unaPrendaPies);
   }
 }
 
@@ -252,4 +315,25 @@ class Lavando extends EstadoPrenda {
   void usar(Prenda unaPrenda) {
     unaPrenda.setEstado(new Limpia());
   }
+}
+
+public final class AccuWeatherAPI {
+
+  public final List<Map<String, Object>> getWeather(String ciudad) {
+  return Arrays.asList(new HashMap<String, Object>(){{
+    put("DateTime", "2019-05-03T01:00:00-03:00");
+    put("EpochDateTime", 1556856000);
+    put("WeatherIcon", 33);
+    put("IconPhrase", "Clear");
+    put("IsDaylight", false);
+    put("PrecipitationProbability", 0);
+    put("MobileLink", "http://m.accuweather.com/en/ar/villa-vil/7984/");
+    put("Link", "http://www.accuweather.com/en/ar/villa-vil/7984");
+    put("Temperature", new HashMap<String, Object>(){{
+      put("Value", 57);
+      put("Unit", "F");
+      put("UnitType", 18);
+    }});
+  }});
+}
 }

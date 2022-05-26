@@ -68,7 +68,13 @@ requerimientos, orientados a integrar el software con colegios e instituciones p
   (Ej: para el colegio San Juan debe ser una chomba verde de piqué, un pantalón de acetato gris y zapatillas blancas, 
   mientras que para el Instituto Johnson siempre será una camisa blanca, pantalón de vestir negro y zapatos negros)
 
-<u>Iteración 2:</u>
+<u>Iteración 3:</u>
+- Quiero poder conocer las condiciones climáticas de Buenos Aires en un momento dado para obtener sugerencias acordes.
+- Quiero poder recibir sugerencias de atuendos que tengan una prenda para cada categoría, aunque a futuro podrán tener más (Ej.: Una remera, un pantalón, zapatos y un gorro).
+- Quiero que al generar una sugerencia las prendas sean acordes a la temperatura actual sabiendo que para cada prenda habrá una temperatura hasta la cual es adecuada. (Ej.: “Remera de mangas largas” no es apta a más de 20°C).
+- Quiero poder configurar fácilmente diferentes servicios de obtención del clima para ajustarme a las cambiantes condiciones económicas.
+- Quiero poder asegurar la calidad de mi aplicación sin incurrir en costos innecesarios. 
+
 
 
 

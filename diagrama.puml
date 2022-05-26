@@ -1,4 +1,4 @@
-@startuml QMP2
+@startuml QMP4
 
 class Prenda {
   tipo : TipoDePrenda
@@ -8,11 +8,15 @@ class Prenda {
   trama : Trama
   estado : EstadoPrenda
   usos : Integer
+  temperaturaMaximaAdecuada : Integer
 
   Categoria getCategoria()
   Boolean esDeCategoria(unaCategoria)
   void validarCategoria(unaCategoria)
   void usar()
+  void validarUsos()
+  void validarTemperaturaAdecuada(temperatura)
+  void validarParaSugerencia(categoria, temperatura)
 }
 
 
@@ -75,11 +79,13 @@ class Borrador {
   colorPrincipal : Color
   colorSecundario : Color
   trama : Trama
+  temperaturaMaximaAdecuada : Integer
 
   void cargarMaterial(material)
   void cargarColorPrincipal(colorPrincipal)
   void cargarColorSecundario(colorSecundario)
   void cargarTrama(trama)
+  void cargarTemperaturaMaximaAdecuada(temperaturaMaximaAdecuada)
   Prenda crearPrenda()
 }
 
@@ -94,17 +100,15 @@ Borrador ..> Prenda
 
 
 class Sugerencia {
-  torso : Prenda
-  piernas : Prenda
-  pies : Prenda
-  accesorios : <List>Prenda
-
-  void validarSugerencia(torso, piernas, pies)
-
+  torso : List<Prenda>
+  piernas : List<Prenda>
+  pies : List<Prenda>
+  accesorios : List<Prenda>
+  temperaturaActual : Integer
 }
 
 
-Sugerencia -> "3..*" Prenda
+Sugerencia -> "4..*" Prenda
 
 
 ' Para la segunda parte usamos el patron State
@@ -149,5 +153,12 @@ Lavando ..> Limpia
 Limpia ..> Sucia
 
 Prenda -right-> EstadoPrenda
+
+
+interface AccuWeatherAPI {
+  List<Map<String, Object>> getWeather(String city)
+}
+
+Sugerencia ..> AccuWeatherAPI
 
 @enduml
