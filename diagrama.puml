@@ -1,4 +1,4 @@
-@startuml QMP2
+@startuml QMP5
 
 class Prenda {
   tipo : TipoDePrenda
@@ -149,5 +149,39 @@ Lavando ..> Limpia
 Limpia ..> Sucia
 
 Prenda -right-> EstadoPrenda
+
+class Guardarropas {
+  prendas : List<Prenda>
+  propuesta : List<Propuesta>
+
+  void aceptarPropuesta(Propuesta)
+  void rechazarPropuesta(Propuesta)
+  void deshacerPropuesta(Propuesta)
+}
+
+' Se consiguen las propuestas existentes con getPropuestas
+
+class Usuario {
+  guardarropas : List<Guardarropas>
+}
+
+interface Propuesta {
+  void aplicarEn(Guardarropas)
+}
+
+class Agregar {
+  prenda : Prenda
+}
+
+class Quitar {
+  prenda : Prenda
+}
+
+Guardarropas --> "*" Prenda
+Usuario --> "*" Guardarropas
+Guardarropas -right-> "*" Propuesta
+
+Agregar .down.|> Propuesta
+Quitar .down.|> Propuesta
 
 @enduml

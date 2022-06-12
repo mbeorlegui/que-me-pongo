@@ -253,3 +253,53 @@ class Lavando extends EstadoPrenda {
     unaPrenda.setEstado(new Limpia());
   }
 }
+
+class Guardarropas {
+  List<Prenda> prendas;
+  List<Propuesta> propuestaes;
+
+  void agregarPrenda(Prenda prenda) {
+    prendas.add(prenda);
+  }
+
+  void quitarPrenda(Prenda prenda) {
+    prendas.remove(prenda);
+  }
+  
+  void agregarPropuesta(Propuesta propuesta) {
+    propuestaes.add(propuesta);
+  }
+
+  void aceptarPropuesta(Propuesta propuesta) {
+    deshacerPropuesta(propuesta);
+    propuesta.aplicarEn(this);
+  }
+
+  void rechazarPropuesta(Propuesta propuesta) {
+    deshacerPropuesta(propuesta);
+  }
+
+  void deshacerPropuesta(Propuesta propuesta) {
+    propuestas.remove(propuesta);
+  }
+}
+
+interface Propuesta {
+  void aplicarEn(Guardarropas guardarropas);
+}
+
+class Agregar {
+  Prenda prenda;
+
+  void aplicarEn(Guardarropas guardarropas) {
+    guardarropas.agregarPrenda(prenda);
+  }
+}
+
+class Quitar {
+  Prenda prenda;
+
+  void aplicarEn(Guardarropas guardarropas) {
+    guardarropas.quitarPrenda(prenda);
+  }
+}
