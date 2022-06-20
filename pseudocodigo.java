@@ -138,9 +138,9 @@ class Borrador {
 }
 
 class Color { // Modelo el color a partir de RGB
-  int rojo, verde, azul
+  int rojo, verde, azul;
 
-  constructor (rojo, verde, azul){
+  constructor (int rojo, int verde, int azul){
     this.rojo = rojo;
     this.verde = verde;
     this.azul = azul;
@@ -163,7 +163,7 @@ enum Material {
 }
 
 class TipoDePrenda {
-  Categoria categoria
+  Categoria categoria;
 
   constructor(Categoria categoria) {
     this.categoria = categoria;
@@ -231,16 +231,16 @@ class Sugerencia {
   List<Prenda> accesorios;
   Integer temperaturaActual;
 
-constructor(Prenda torso, Prenda piernas, Prenda pies, Prenda accesorio){
-  AccuWeatherAPI apiClima = new AccuWeatherAPI();
-  List<Map<String, Object>> condicionesClimaticas = apiClima.getWeather(“Buenos Aires, Argentina”);
-  this.temperaturaActual = condicionesClimaticas.get(0).get("Temperature").get("Value");
-  validarSugerencia(torso, piernas, pies, accesorio);
-  this.agregarTorso(torso);
-  this.agregarPiernas(piernas);
-  this.agregarPies(pies);
-  this.agregarAccesorio(accesorio);
-}
+  constructor(Prenda torso, Prenda piernas, Prenda pies, Prenda accesorio){
+    AccuWeatherAPI apiClima = new AccuWeatherAPI();
+    List<Map<String, Object>> condicionesClimaticas = apiClima.getWeather(“Buenos Aires, Argentina”);
+    this.temperaturaActual = condicionesClimaticas.get(0).get("Temperature").get("Value");
+    validarSugerencia(torso, piernas, pies, accesorio);
+    this.agregarTorso(torso);
+    this.agregarPiernas(piernas);
+    this.agregarPies(pies);
+    this.agregarAccesorio(accesorio);
+  }
 
   void agregarAccesorio(Prenda unAccesorio) {
     accesorio.validarParaSugerencia(Categoria.ACCESORIO, temperaturaActual);
@@ -347,24 +347,52 @@ class Guardarropas {
   }
 }
 
-interface Propuesta {
-  void aplicarEn(Guardarropas guardarropas);
+abstract class Propuesta {
+  Prenda prenda;
+  EstadoPropuesta estado;
+
+  abstract void aplicarEn(Guardarropas guardarropas);
+
+  void aceptar(Guardarropas guardarropas){
+    this.estado = EstadoPropuesta.ACEPTADA;
+    this.aplicarEn(guardarropas);
+  }
+  void rechazar(Guardarropas Guardarropas){
+    this.estado = EstadoPropuesta.RECHAZADA;
+  }
+  void deshacer(Guardarropas Guardarropas){
+    this.estado = EstadoPropuesta.PENDIENTE;
+  }
 }
 
-class Agregar {
+class Agregar extends Propuesta {
   Prenda prenda;
 
   void aplicarEn(Guardarropas guardarropas) {
     guardarropas.agregarPrenda(prenda);
   }
+  void deshacer(Guardarropas guardarropas){
+    super.deshacer(guardarropas);
+    guardarropas.quitarPrenda(this.prenda);
+  }
 }
 
-class Quitar {
+class Quitar extends Propuesta {
   Prenda prenda;
 
   void aplicarEn(Guardarropas guardarropas) {
     guardarropas.quitarPrenda(prenda);
   }
+  void deshacer(Guardarropas guardarropas){
+    super.deshacer(guardarropas);
+    guardarropas.agregarPrenda(this.prenda);
+  }
+}
+
+enum EstadoPropuesta{
+  ACEPTADA,
+  RECHAZADA,
+  PENDIENTE,
 }
 
 public final class AccuWeatherAPI {
@@ -387,3 +415,4 @@ public final class AccuWeatherAPI {
     }});
   }
 }
+
