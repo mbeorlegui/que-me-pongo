@@ -95,8 +95,8 @@ class Uniforme {
   calzado : Prenda
 }
 
+Borrador .down.> Prenda
 Uniforme -->"3" Prenda
-Borrador ..> Prenda
 
 
 class Sugerencia {
@@ -108,7 +108,7 @@ class Sugerencia {
 }
 
 
-Sugerencia -> "4..*" Prenda
+Sugerencia -up-> "4..*" Prenda
 
 
 ' Para la segunda parte usamos el patron State
@@ -157,10 +157,7 @@ Prenda -right-> EstadoPrenda
 class Guardarropas {
   prendas : List<Prenda>
   propuesta : List<Propuesta>
-
-  void aceptarPropuesta(Propuesta)
-  void rechazarPropuesta(Propuesta)
-  void deshacerPropuesta(Propuesta)
+  void propuestasPendientes()
 }
 
 ' Se consiguen las propuestas existentes con getPropuestas
@@ -169,24 +166,35 @@ class Usuario {
   guardarropas : List<Guardarropas>
 }
 
-interface Propuesta {
+abstract class Propuesta {
+  prenda : Prenda
+  estado : EstadoPropuesta
   void aplicarEn(Guardarropas)
+  void aceptar(Guardarropas)
+  void rechazar(Guardarropas)
+  void deshacer(Guardarropas)
 }
 
 class Agregar {
-  prenda : Prenda
 }
 
 class Quitar {
-  prenda : Prenda
 }
 
-Guardarropas --> "*" Prenda
-Usuario --> "*" Guardarropas
-Guardarropas -right-> "*" Propuesta
+enum EstadoPropuesta{
+  ACEPTADA,
+  RECHAZADA,
+  PENDIENTE,
+}
 
-Agregar .down.|> Propuesta
-Quitar .down.|> Propuesta
+Guardarropas -right-> "*" Prenda
+Usuario -up-> "*" Guardarropas
+Guardarropas -left-> "*" Propuesta
+Propuesta -up-> EstadoPropuesta
+Propuesta -right-> Prenda
+
+Agregar -up-|> Propuesta
+Quitar -up-|> Propuesta
 
 interface AccuWeatherAPI {
   List<Map<String, Object>> getWeather(String city)
