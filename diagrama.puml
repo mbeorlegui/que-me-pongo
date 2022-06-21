@@ -1,4 +1,4 @@
-@startuml QMP5
+@startuml QMP6
 
 class Prenda {
   tipo : TipoDePrenda
@@ -95,8 +95,8 @@ class Uniforme {
   calzado : Prenda
 }
 
-Borrador .down.> Prenda
-Uniforme -->"3" Prenda
+Borrador .right.> Prenda
+Uniforme -up->"3" Prenda
 
 
 class Sugerencia {
@@ -104,11 +104,10 @@ class Sugerencia {
   piernas : List<Prenda>
   pies : List<Prenda>
   accesorios : List<Prenda>
-  temperaturaActual : Integer
 }
 
 
-Sugerencia -up-> "4..*" Prenda
+Sugerencia -down-> "4..*" Prenda
 
 
 ' Para la segunda parte usamos el patron State
@@ -164,6 +163,9 @@ class Guardarropas {
 
 class Usuario {
   guardarropas : List<Guardarropas>
+  ciudad : String
+  mail : String
+  Sugerencia generarSugerencia()
 }
 
 abstract class Propuesta {
@@ -173,6 +175,7 @@ abstract class Propuesta {
   void aceptar(Guardarropas)
   void rechazar(Guardarropas)
   void deshacer(Guardarropas)
+  List<Propuesta> propuestasPendientes()
 }
 
 class Agregar {
@@ -187,19 +190,89 @@ enum EstadoPropuesta{
   PENDIENTE,
 }
 
-Guardarropas -right-> "*" Prenda
-Usuario -up-> "*" Guardarropas
-Guardarropas -left-> "*" Propuesta
+Guardarropas --> "*" Prenda
+Usuario --> "*" Guardarropas
+Guardarropas -up-> "*" Propuesta
 Propuesta -up-> EstadoPropuesta
-Propuesta -right-> Prenda
+Propuesta --> Prenda
 
-Agregar -up-|> Propuesta
-Quitar -up-|> Propuesta
+Agregar --|> Propuesta
+Quitar --|> Propuesta
 
 interface AccuWeatherAPI {
   List<Map<String, Object>> getWeather(String city)
+  Map<String, List<String>> getAlerts(String city)
 }
 
-Sugerencia ..> AccuWeatherAPI
+GeneradorDeSugerencias .right.> Clima
+RepositorioDeClimas .up.> AccuWeatherAPI
+
+class RepositorioDeUsuarios{
+  usuarios : List<Usuario>
+  void generarSugerencias(ultimoClima)
+  void emitirAlerta(notificacionAlerta)
+  void enviarMailAlerta(MailAlerta)
+}
+
+RepositorioDeUsuarios -down-> "*" Usuario
+RepositorioDeUsuarios .right.> Clima
+
+class Clima {
+  temperatura : Temperatura
+  alertas : List<Alerta>
+}
+
+enum Temperatura {
+  FRIO
+  TEMPLADO
+  CALOR
+}
+
+enum Alerta {
+  GRANIZO
+  TORMENTA
+}
+
+class RepositorioDeClimas {
+  climas : List<Clima>
+  void actualizarClima(String ciudad)
+  Clima getUltimoClima(String ciudad)
+  void notificarAlerta(Alerta)
+}
+
+class GeneradorDeSugerencias {
+  Sugerencia generarSugerencia(unClima, unUsuario)
+}
+
+Clima -up-> "*" Alerta
+Clima -up-> Temperatura
+RepositorioDeClimas -left-> Clima
+' RepositorioDeClimas ...> RepositorioDeUsuarios
+GeneradorDeSugerencias ...> Usuario
+' Usuario ..> GeneradorDeSugerencias
+
+Usuario ..> Sugerencia
+
+class NotificacionAlerta {
+  void emitirMensaje(Alerta unAlerta)
+}
+
+class NotificationService{
+  notify(text)
+}
+
+RepositorioDeClimas ...> NotificacionAlerta
+NotificacionAlerta -> NotificationService
+RepositorioDeUsuarios ...> NotificacionAlerta
+
+class MailAlerta{
+  void emitirMail(Alerta unAlerta, Usuario unUsuario)
+}
+
+class MailSender{
+  send(email, text)
+}
+
+RepositorioDeUsuarios ...> MailAlerta
 
 @enduml

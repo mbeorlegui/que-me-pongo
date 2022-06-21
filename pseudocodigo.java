@@ -82,7 +82,7 @@ class Borrador {
   Trama trama = Trama.LISA;
   Integer temperaturaMaximaAdecuada = NULL;
 
-  constructor(tipo){
+  Borrador constructor(TipoPrenda tipo){
     // Ponemos el tipo en el constructor para asegurarnos
     // de que se cargue primero
     this.tipo = requireNonNull(tipo, "El tipo de prenda es obligatorio");
@@ -140,7 +140,7 @@ class Borrador {
 class Color { // Modelo el color a partir de RGB
   int rojo, verde, azul;
 
-  constructor (int rojo, int verde, int azul){
+  Color constructor (int rojo, int verde, int azul){
     this.rojo = rojo;
     this.verde = verde;
     this.azul = azul;
@@ -165,27 +165,26 @@ enum Material {
 class TipoDePrenda {
   Categoria categoria;
 
-  constructor(Categoria categoria) {
+  TipoDePrenda constructor(Categoria categoria) {
     this.categoria = categoria;
   }
 
   Categoria getCategoria() {
     return this.categoria;
   }
-
-  const ZAPATO = new TipoDePrenda(CALZADO);
-  const REMERA=new TipoDePrenda(PARTE_SUPERIOR);
-  const PANTALON=new TipoDePrenda(PARTE_INFERIOR);
+}
+  // const ZAPATO = new TipoDePrenda(CALZADO);
+  // const REMERA=new TipoDePrenda(PARTE_SUPERIOR);
+  // const PANTALON=new TipoDePrenda(PARTE_INFERIOR);
   // Asi establecemos la relacion entre los Tipos y
   // las Categorias
-}
 
-class Uniforme {
+
+class Uniforme{
   Prenda parteSuperior;
   Prenda parteInferior;
   Prenda calzado;
-
-  constructor(Prenda parteSuperior, Prenda parteInferior, Prenda calzado){
+  Uniforme constructor(Prenda parteSuperior, Prenda parteInferior, Prenda calzado){
     parteSuperior.validarCategoria(Categoria.PARTE_SUPERIOR);
     this.parteSuperior = parteSuperior;
     parteInferior.validarCategoria(Categoria.PARTE_INFERIOR);
@@ -195,14 +194,14 @@ class Uniforme {
   }
 }
 
-  // Por ahora en lugar de crear una clase Colegio solo con el atributo de
-  // Uniforme, decidimos mostrar como
-  // instanciar un uniforme para el proximo uso
-Borrador chombaVerde = new Borrador(...);
-Borrador pantalonGris = new Borrador(...);
-Borrador zapatillasBlancas = new Borrador(...);
+// Por ahora en lugar de crear una clase Colegio solo con el atributo de
+// Uniforme, decidimos mostrar como
+// instanciar un uniforme para el proximo uso
+// Borrador chombaVerde = new Borrador(...);
+// Borrador pantalonGris = new Borrador(...);
+// Borrador zapatillasBlancas = new Borrador(...);
 //...
-Uniforme sanJuan = new Uniforme(chombaVerde.crearPrenda(), pantalonGris.crearPrenda(), zapatillasBlancas.crearPrenda());
+//Uniforme sanJuan = new Uniforme(chombaVerde.crearPrenda(), pantalonGris.crearPrenda(), zapatillasBlancas.crearPrenda());
 
 /* Otra posibilidad: Guardar las temperaturas en una class Temperaturas y que el sistema
   las actualice cada X tiempo, asi controlamos la cantidad de llamados a la API
@@ -317,9 +316,17 @@ class Lavando extends EstadoPrenda {
   }
 }
 
+class Usuario{
+  List<Guardarropas> guardarropas;
+  String ciudad;
+  String mail;
+  Sugerencia generarSugerencia(){
+    
+  }
+}
 class Guardarropas {
   List<Prenda> prendas;
-  List<Propuesta> propuestaes;
+  List<Propuesta> propuestas;
 
   void agregarPrenda(Prenda prenda) {
     prendas.add(prenda);
@@ -330,20 +337,10 @@ class Guardarropas {
   }
   
   void agregarPropuesta(Propuesta propuesta) {
-    propuestaes.add(propuesta);
+    propuestas.add(propuesta);
   }
-
-  void aceptarPropuesta(Propuesta propuesta) {
-    deshacerPropuesta(propuesta);
-    propuesta.aplicarEn(this);
-  }
-
-  void rechazarPropuesta(Propuesta propuesta) {
-    deshacerPropuesta(propuesta);
-  }
-
-  void deshacerPropuesta(Propuesta propuesta) {
-    propuestas.remove(propuesta);
+  List<Propuesta> propuestasPendientes(){
+    return this.propuestas.filter(p -> p.estaPendiente());
   }
 }
 
@@ -362,6 +359,9 @@ abstract class Propuesta {
   }
   void deshacer(Guardarropas Guardarropas){
     this.estado = EstadoPropuesta.PENDIENTE;
+  }
+  boolean estaPendiente(){
+    return this.estado.equals(EstadoPropuesta.PENDIENTE);
   }
 }
 
@@ -414,5 +414,82 @@ public final class AccuWeatherAPI {
       }});
     }});
   }
+
+  Map<String, List<String>> getAlerts(String city){
+
+  }
 }
 
+class RepositorioDeUsuarios{
+  List<Usuario> usuarios;
+
+  void generarSugerencias(Clima ultimoClima){
+
+  }
+  void emitirAlerta(NotificacionAlerta notificacionAlerta){
+
+  }
+  void enviarMailAlerta(MailAlerta mailAlerta){
+
+  }
+}
+
+class Clima {
+  Temperatura temperatura;
+  List<Alerta> alertas;
+}
+
+enum Temperatura {
+  FRIO,
+  TEMPLADO,
+  CALOR
+}
+
+enum Alerta {
+  GRANIZO,
+  TORMENTA
+}
+
+class RepositorioDeClimas {
+  List<Clima> climas;
+  void actualizarClima(String ciudad){
+
+  }
+  Clima getUltimoClima(String ciudad){
+
+  }
+  void notificarAlerta(Alerta alerta){
+    
+  }
+}
+
+class GeneradorDeSugerencias {
+  Sugerencia generarSugerencia(Clima unClima, Usuario unUsuario){
+
+  }
+}
+
+class NotificacionAlerta {
+  void emitirMensaje(Alerta unAlerta){
+
+  }
+}
+
+class NotificationService{
+  void notify(String text){
+
+  }
+}
+
+
+class MailAlerta{
+  void emitirMail(Alerta unAlerta, Usuario unUsuario){
+    
+  }
+}
+
+class MailSender{
+  void send(String email, String text){
+
+  }
+}
