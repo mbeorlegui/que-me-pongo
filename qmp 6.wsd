@@ -1,0 +1,283 @@
+@startuml QMP6
+
+class Prenda {
+  tipo : TipoDePrenda
+  material : Material
+  colorPrincipal : Color
+  colorSecundario : Color
+  trama : Trama
+  estado : EstadoPrenda
+  usos : Integer
+  temperaturaMaximaAdecuada : Integer
+
+  Categoria getCategoria()
+  Boolean esDeCategoria(unaCategoria)
+  void validarCategoria(unaCategoria)
+  void usar()
+  void validarUsos()
+  void validarTemperaturaAdecuada(temperatura)
+  void validarParaSugerencia(categoria, temperatura)
+}
+
+
+class Color {
+  rojo : int
+  verde : int
+  azul : int 
+}
+
+enum Categoria {
+  CALZADO,
+  PARTE_SUPERIOR,
+  PARTE_INFERIOR,
+  ACCESORIO,
+}
+
+enum Material {
+  ALGODON,
+  LINO,
+  LANA,
+  POLIESTER,
+  SEDA,
+}
+
+class TipoDePrenda {
+  categoria : Categoria  
+  
+  Categoria getCategoria()
+}
+
+Prenda --> Material
+Prenda --> TipoDePrenda
+Prenda --> Color
+TipoDePrenda --> Categoria
+' Prenda conoce su Material
+' Prenda --> "1" Categoria
+
+
+enum Trama{
+  LISA,
+  RAYADA,
+  CON_LUNARES,
+  A_CUADROS,
+  ESTAMPADO,
+}
+
+' Trama corresponde a la tela, eso quiere decir que
+' corresponde al Material? De ser asi debemos agregarle comportamiento
+' al enum de Material creo
+' IMO: Hay que agregarlo directamente a la prenda como propiedad
+Prenda --> Trama
+
+' El borrador deberia ser una clase "parecida" a la Prenda, e
+' incluso dentro de su constructor, podemos hacer las validaciones
+' de los datos para crear a la prenda desde alli
+
+class Borrador {
+  tipo : TipoDePrenda
+  material : Material
+  colorPrincipal : Color
+  colorSecundario : Color
+  trama : Trama
+  temperaturaMaximaAdecuada : Integer
+
+  void cargarMaterial(material)
+  void cargarColorPrincipal(colorPrincipal)
+  void cargarColorSecundario(colorSecundario)
+  void cargarTrama(trama)
+  void cargarTemperaturaMaximaAdecuada(temperaturaMaximaAdecuada)
+  Prenda crearPrenda()
+}
+
+class Uniforme {
+  parteSuperior : Prenda
+  parteInferior : Prenda
+  calzado : Prenda
+}
+
+Borrador .right.> Prenda
+Uniforme -up->"3" Prenda
+
+
+class Sugerencia {
+  torso : List<Prenda>
+  piernas : List<Prenda>
+  pies : List<Prenda>
+  accesorios : List<Prenda>
+}
+
+
+Sugerencia -down-> "4..*" Prenda
+
+
+' Para la segunda parte usamos el patron State
+
+abstract EstadoPrenda {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Sucia {
+  void lavar()
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Percudida {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Limpia {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+
+class Lavando {
+  Boolean puedeSerSugerida()
+  void usar(unaPrenda)
+}
+' No esta clara la transicion de estado que tiene el estado Lavando
+' por lo que decidimos que mientras se esta lavando se pueda usar
+' y cuando eso suceda, pasara a Limpia
+
+EstadoPrenda <|-- Sucia
+EstadoPrenda <|-- Percudida
+EstadoPrenda <|-- Limpia
+EstadoPrenda <|-- Lavando
+
+Sucia ..> Percudida
+Sucia ..> Lavando
+Lavando ..> Limpia
+Limpia ..> Sucia
+
+Prenda -right-> EstadoPrenda
+
+class Guardarropas {
+  prendas : List<Prenda>
+  propuesta : List<Propuesta>
+  void propuestasPendientes()
+}
+
+' Se consiguen las propuestas existentes con getPropuestas
+
+class Usuario {
+  guardarropas : List<Guardarropas>
+  ciudad : String
+  mail : String
+  generadorPersonalSugerencias : GeneradorDeSugerencias
+  Sugerencia generarSugerencia()
+}
+
+abstract class Propuesta {
+  prenda : Prenda
+  estado : EstadoPropuesta
+  void aplicarEn(Guardarropas)
+  void aceptar(Guardarropas)
+  void rechazar(Guardarropas)
+  void deshacer(Guardarropas)
+  List<Propuesta> propuestasPendientes()
+}
+
+class Agregar {
+}
+
+class Quitar {
+}
+
+enum EstadoPropuesta{
+  ACEPTADA,
+  RECHAZADA,
+  PENDIENTE,
+}
+
+Guardarropas --> "*" Prenda
+Usuario --> "*" Guardarropas
+Guardarropas -up-> "*" Propuesta
+Propuesta -up-> EstadoPropuesta
+Propuesta --> Prenda
+Usuario ---> GeneradorDeSugerencias
+
+Agregar --|> Propuesta
+Quitar --|> Propuesta
+
+interface AccuWeatherAPI {
+  List<Map<String, Object>> getWeather(String city)
+  Map<String, List<String>> getAlerts(String city)
+}
+
+GeneradorDeSugerencias .right.> Clima
+RepositorioDeClimas .up.> AccuWeatherAPI
+
+class RepositorioDeUsuarios{
+  usuarios : List<Usuario>
+  void generarSugerencias(ultimoClima)
+  void emitirAlerta(notificacionAlerta)
+  void enviarMailAlerta(MailAlerta)
+}
+
+RepositorioDeUsuarios -down-> "*" Usuario
+RepositorioDeUsuarios .right.> Clima
+
+class Clima {
+  temperatura : Temperatura
+  alertas : List<Alerta>
+}
+
+enum Temperatura {
+  FRIO
+  TEMPLADO
+  CALOR
+}
+
+enum Alerta {
+  GRANIZO
+  TORMENTA
+}
+
+class RepositorioDeClimas {
+  climas : List<Clima>
+  void actualizarClima(String ciudad)
+  Clima getUltimoClima(String ciudad)
+  void notificarAlerta(Alerta)
+}
+
+class GeneradorDeSugerencias {
+  baseClimas : RepositorioDeClimas
+  unUsuario : Usuario
+  Sugerencia generarSugerencia()
+}
+
+Clima -up-> "*" Alerta
+Clima -up-> Temperatura
+RepositorioDeClimas -left-> Clima
+' RepositorioDeClimas ...> RepositorioDeUsuarios
+GeneradorDeSugerencias -down-> Usuario
+' Usuario ..> GeneradorDeSugerencias
+GeneradorDeSugerencias ---> RepositorioDeClimas
+
+Usuario ..> Sugerencia
+
+class NotificacionAlerta {
+  void emitirMensaje(Alerta unAlerta)
+}
+
+class NotificationService{
+  notify(text)
+}
+
+RepositorioDeClimas ...> NotificacionAlerta
+NotificacionAlerta -> NotificationService
+RepositorioDeUsuarios ...> NotificacionAlerta
+
+class MailAlerta{
+  void emitirMail(Alerta unAlerta, Usuario unUsuario)
+}
+
+class MailSender{
+  send(email, text)
+}
+
+RepositorioDeUsuarios ...> MailAlerta
+
+@enduml
