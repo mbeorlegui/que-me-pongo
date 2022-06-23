@@ -209,17 +209,13 @@ class Uniforme{
   eliminando el primer item de la lista para hacer get(0) y sea la "hora actual"
 class Temperaturas {
   List<Map<String, Object>> condicionesClimaticas;
-
   constructor (List<Map<String, Object>> condicionesClimaticas){
     AccuWeatherAPI apiClima = new AccuWeatherAPI();
     List<Map<String, Object>> nuevasCondicionesClimaticas = apiClima.getWeather(“Buenos Aires, Argentina”);
     //this.temperaturaActual = condicionesClimaticas.get(0).get("Temperature").get("Value");
-
     condicionesClimaticas = nuevasCondicionesClimaticas;
   }
-
   void actualizarTemperaturas(){
-
   }
 }*/
 
@@ -320,10 +316,20 @@ class Usuario{
   List<Guardarropas> guardarropas;
   String ciudad;
   String mail;
+  GeneradorDeSugerencias generadorPersonalSugerencias;
   Sugerencia generarSugerencia(){
-    
+    generadorPersonalSugerencias.generarSugerencia();
+  }
+  List<Prenda> prendasDelUsuario(){
+    List<Prenda> listaPrendas = new ArrayList<Prenda>();
+    for (Guardarropas g : this.guardarropas){
+      for (Prenda p : g.prendas){
+        listaPrendas.add(p);
+      }
+    }
   }
 }
+
 class Guardarropas {
   List<Prenda> prendas;
   List<Propuesta> propuestas;
@@ -424,13 +430,15 @@ class RepositorioDeUsuarios{
   List<Usuario> usuarios;
 
   void generarSugerencias(Clima ultimoClima){
-
+    for (Usuario user : this.usuarios){
+      user.generarSugerencia();
+    }
   }
   void emitirAlerta(NotificacionAlerta notificacionAlerta){
-
+    
   }
   void enviarMailAlerta(MailAlerta mailAlerta){
-
+    
   }
 }
 
@@ -452,26 +460,43 @@ enum Alerta {
 
 class RepositorioDeClimas {
   List<Clima> climas;
+  AccuWeatherAPI apiHandler;
   void actualizarClima(String ciudad){
-
+    Clima elClima = new Clima();
+    elClima.temperatura = apiHandler.getWeather(ciudad);
+    elClima.alertas.addAll(apiHandler.getAlerts(ciudad));
+    climas.add(elClima);
   }
   Clima getUltimoClima(String ciudad){
-
+    // TODO
+    //devolver ultimo miembro de la lista "climas"
   }
   void notificarAlerta(Alerta alerta){
-    
+    // TODO
   }
 }
 
 class GeneradorDeSugerencias {
-  Sugerencia generarSugerencia(Clima unClima, Usuario unUsuario){
-
+  RepositorioDeClimas baseClimas;
+  Usuario unUsuario;
+  Sugerencia generarSugerencia(){
+    baseClimas.actualizarClima(unUsuario.ciudad);
+    Sugerencia resultante = new Sugerencia();
+    if (baseClimas.getUltimoClima(unUsuario.ciudad).temperatura == Temperatura.FRIO){
+      resultante.torso == unUsuario.prendasDelUsuario.filter(prenda -> (prenda.esDeCategoria(Categoria.PARTE_SUPERIOR)) 
+      & prenda.temperaturaIdeal == Temperatura.FRIO)
+      // aplicar la misma logica a las distintas partes del cuerpo y las distintas temperaturas
+      //TODO
+    }
+    return resultante;
   }
 }
 
 class NotificacionAlerta {
   void emitirMensaje(Alerta unAlerta){
-
+    String mensaje = new String();
+    // Setear el texto dependiendo el tipo de alerta y usar NotificationService
+    //TODO
   }
 }
 
@@ -483,8 +508,12 @@ class NotificationService{
 
 
 class MailAlerta{
+  MailSender mailHandler;
   void emitirMail(Alerta unAlerta, Usuario unUsuario){
-    
+    String mensaje = new String();
+    // Setear mensaje dependiendo de la alerta pasada como parametro
+    //TODO
+    mailHandler.send(mensaje, unUsuario.mail);
   }
 }
 
