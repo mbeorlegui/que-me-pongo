@@ -165,6 +165,7 @@ class Usuario {
   guardarropas : List<Guardarropas>
   ciudad : String
   mail : String
+  generadorPersonalSugerencias : GeneradorDeSugerencias
   Sugerencia generarSugerencia()
 }
 
@@ -195,6 +196,7 @@ Usuario --> "*" Guardarropas
 Guardarropas -up-> "*" Propuesta
 Propuesta -up-> EstadoPropuesta
 Propuesta --> Prenda
+Usuario ---> GeneradorDeSugerencias
 
 Agregar --|> Propuesta
 Quitar --|> Propuesta
@@ -241,15 +243,18 @@ class RepositorioDeClimas {
 }
 
 class GeneradorDeSugerencias {
-  Sugerencia generarSugerencia(unClima, unUsuario)
+  baseClimas : RepositorioDeClimas
+  unUsuario : Usuario
+  Sugerencia generarSugerencia()
 }
 
 Clima -up-> "*" Alerta
 Clima -up-> Temperatura
 RepositorioDeClimas -left-> Clima
 ' RepositorioDeClimas ...> RepositorioDeUsuarios
-GeneradorDeSugerencias ...> Usuario
+GeneradorDeSugerencias -down-> Usuario
 ' Usuario ..> GeneradorDeSugerencias
+GeneradorDeSugerencias ---> RepositorioDeClimas
 
 Usuario ..> Sugerencia
 
